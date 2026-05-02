@@ -1,4 +1,4 @@
-# BHTRANS
+t# BHTRANS
 Ferramenta de monitoramento e rastreamento em tempo real da frota de ônibus de Belo Horizonte, utilizando a API de dados abertos.
 # Projeto BHTRANS - Monitoramento de Frota
 
@@ -9,11 +9,4 @@ A meta é bater os dados de GPS dos ônibus com o quadro de horários oficial. A
 - Pegar a localização exata de cada veículo via API.
 - Filtrar por número da linha (ex: 8207, 5106).
 - Criar um histórico simples de atrasos por região.
-
-## 🔧 Dados utilizados
-Tudo aqui é baseado nos dados abertos da PBH. Se quiser entender a estrutura, os links são:
-- Base de dados do GTFS (itinerários): https://pbh.gov.br
-- API de tempo real (coordenadas): https://pbh.gov.br
-
-
 
