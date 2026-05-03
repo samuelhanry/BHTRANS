@@ -1,0 +1,10 @@
+
+#mapa {
+  height: calc(100vh - 56px);
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
