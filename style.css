@@ -25,6 +25,13 @@
          animation: passar2 10s linear infinite;
      }
  }
+.caber{
+    background-color: white; justify-content: center; width: 100%; height: 200px;
+}
+
+.caber2{
+    position: relative; top: +200px; left: 10px;
+}
 
 
 @keyframes passar {
@@ -36,3 +43,4 @@
     from { transform: translateX(665%); }
     to { transform: translateX(0); }
 }
+
