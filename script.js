@@ -5,17 +5,70 @@
 
 //PESSOA 1
 
-
 // BLOCO 1: Variáveis globais
-  //const UTM_ZONE = //...
-  //let todasAsParadas = //...
-  //let marcadoresParadas = //...
+
+const utmFormat = "+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs";
+
+let todasAsParadas = [];
+let marcadoresParadas =[];
+
+// BLOCO 2: 
+
+//Conversão de Coordenadas (UTM para Leaflet)
+//Configuração para Proj4js (SIRGAS 2000 / UTM zone 23S)
 
 
-// BLOCO 2: converterUTM(x, y)
+function converterUTM(x,y){
+  const coords = proj4(utmFormat, "EPSG:4326", [x, y]);
+  return [coords[1], coords[0]]; // Retorna [Lat, Lng]
+}
 
+// BLOCO 3: Carregar paradas
 
-// BLOCO 3: carregarParadas()
+async function carregarParadas() {
+
+  Papa.parse("20260401_ponto_onibus.csv", {
+
+      download: true,
+      header: true, // Usa a primeira linha como cabeçalho
+      skipEmptyLines: true,
+
+      complete: function(results) {
+
+        todasAsParadas = results.data.map(parada => {
+
+          const geometria = parada.GEOMETRIA;
+          const match = geometria.match(/POINT\s*\(([\d.-]+)\s+([\d.-]+)\)/);
+
+          if (!match) return null;
+
+          const x = parseFloat(match[1]);
+          const y = parseFloat(match[2]);
+          const [lat, lng] = converterUTM(x, y);
+
+          return {
+            id: parada.ID_PONTO_ONIBUS,
+            identificador: parada.IDENTIFICADOR_PONTO_ONIBUS,
+            lat,
+            lng,
+            geometria
+          };
+
+        }).filter(p => p !== null);
+
+        console.log("Paradas carregadas:", todasAsParadas);
+
+        resolve(todasAsParadas);
+      },
+
+      error: function(error) {
+        console.error("Erro ao carregar CSV:", error);
+        reject(error);
+      }
+
+  });
+
+}
 
 
 
