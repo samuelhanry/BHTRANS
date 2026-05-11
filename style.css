@@ -1,10 +1,38 @@
-
-#mapa {
-  height: calc(100vh - 56px);
-  width: 100%;
+.mapa{
+    width: 500px;
+    height: 500px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+    border: 20px solid darkgray;
+    border-clip: 10px;
+    border-radius: 10px;
+    margin-top: 30px;
 }
 
-body {
-  margin: 0;
-  padding: 0;
+.onibus-video {
+     @media (max-width: 768px) {
+         width: 200px;
+         position: absolute;
+         bottom: 0;
+         animation: passar 10s linear infinite;
+     }
+     @media (min-width: 769px) {
+         width: 200px;
+         position: absolute;
+         bottom: 0;
+         animation: passar2 10s linear infinite;
+     }
+ }
+
+
+@keyframes passar {
+    from { transform: translateX(280%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes passar2 {
+    from { transform: translateX(665%); }
+    to { transform: translateX(0); }
 }
