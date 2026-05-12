@@ -27,7 +27,7 @@ function converterUTM(x,y){
 
 async function carregarParadas() {
 
-  Papa.parse("20260401_ponto_onibus.csv", {
+  Papa.parse("data/ponto_onibus.csv", {
 
       download: true,
       header: true, // Usa a primeira linha como cabeçalho
@@ -56,14 +56,11 @@ async function carregarParadas() {
 
         }).filter(p => p !== null);
 
-        console.log("Paradas carregadas:", todasAsParadas);
-
-        resolve(todasAsParadas);
+        console.log("Paradas carregadas:", todasAsParadas.length);
       },
 
       error: function(error) {
         console.error("Erro ao carregar CSV:", error);
-        reject(error);
       }
 
   });
