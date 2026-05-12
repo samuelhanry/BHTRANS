@@ -104,9 +104,63 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // BLOCO 8: mostrarParadasDaLinha(linha)
 
 
-// BLOCO 9: calcularDistancia() e destacarParadaMaisProxima()
-  //let marcadorUsuario = //...
-  //let marcadorProximo = ...
+// BLOCO 9: Geolocalização e parada mais próxima
+
+let marcadorUsuario = null;
+let marcadorProximo = null;
+
+function calcularDistancia(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function destacarParadaMaisProxima(paradas) {
+  navigator.geolocation.getCurrentPosition(
+    function(posicao) {
+      const latUsuario = posicao.coords.latitude;
+      const lngUsuario = posicao.coords.longitude;
+
+      // Marca a posição do usuário no mapa
+      if (marcadorUsuario) mapa.removeLayer(marcadorUsuario);
+      marcadorUsuario = L.circleMarker([latUsuario, lngUsuario], {
+        radius: 8,
+        color: "#00CC00",
+        fillOpacity: 1
+      }).addTo(mapa).bindPopup("Você está aqui").openPopup();
+
+      // Encontra a parada mais próxima
+      let paradaMaisProxima = null;
+      let menorDistancia = Infinity;
+
+      paradas.forEach(function(parada) {
+        const dist = calcularDistancia(latUsuario, lngUsuario, parada.lat, parada.lng);
+        if (dist < menorDistancia) {
+          menorDistancia = dist;
+          paradaMaisProxima = parada;
+        }
+      });
+
+      // Destaca a parada mais próxima em vermelho
+      if (marcadorProximo) mapa.removeLayer(marcadorProximo);
+      marcadorProximo = L.circleMarker([paradaMaisProxima.lat, paradaMaisProxima.lng], {
+        radius: 10,
+        color: "#FF0000",
+        fillOpacity: 1
+      }).addTo(mapa).bindPopup("Parada mais próxima: " + paradaMaisProxima.nome).openPopup();
+
+    },
+    function() {
+      alert("Não foi possível obter sua localização.");
+    }
+  );
+}
 
 
 // TODAS AS PESSOAS
