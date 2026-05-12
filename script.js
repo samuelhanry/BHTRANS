@@ -81,13 +81,75 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 
 // BLOCO 5: Variáveis de controle
-  //const URL_API = //...
-  //let marcadoresOnibus = //...
-  //let intervalo = //...
-  //let linhaAtiva = //...
+
+const URL_API = "https://corsproxy.io/?url=https://temporeal.pbh.gov.br/?param=D";
+
+let marcadoresOnibus = [];
+let intervalo = null;
+let linhaAtiva = null;
+
 
 
 // BLOCO 6: atualizarOnibus()
+
+async function atualizarOnibus() {
+
+  try {
+
+    const response = await fetch(URL_API);
+    const data = await response.json();
+
+    // limpa ônibus antigos do mapa
+    marcadoresOnibus.forEach(marker => {
+      mapa.removeLayer(marker);
+    });
+
+    marcadoresOnibus = [];
+
+
+    // verifica onde está a lista de veículos
+    const veiculos = data.VEIC || data.veiculos || data;
+
+    veiculos.forEach(onibus => {
+
+      // tenta pegar os campos da API
+      const linha = onibus.LINHA || onibus.linha;
+      const lat = parseFloat(onibus.LAT || onibus.lat);
+      const lng = parseFloat(onibus.LON || onibus.lon || onibus.lng);
+
+      // ignora coordenadas inválidas
+      if (isNaN(lat) || isNaN(lng)) return;
+
+      // se houver filtro ativo, mostra só a linha filtrada
+      if (linhaAtiva && linha !== linhaAtiva) return;
+
+
+      // marcador simples (mais leve para muitos ônibus)
+      const marcador = L.circleMarker([lat, lng], {
+
+        radius: 4,
+        color: "#0066FF",
+        fillOpacity: 0.8
+
+      })
+      .addTo(mapa)
+      .bindPopup("Linha: " + linha);
+
+
+      marcadoresOnibus.push(marcador);
+
+    });
+
+    console.log("Ônibus atualizados:", marcadoresOnibus.length);
+
+  }
+  catch(error) {
+
+    console.error("Erro ao buscar ônibus:", error);
+
+  }
+
+}
 
 
 
