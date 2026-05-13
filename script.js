@@ -11,6 +11,9 @@ const utmFormat = "+proj=utm +zone=23 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0
 
 let todasAsParadas = [];
 let marcadoresParadas =[];
+let paradasLayer;
+let marcadorProximo = null;
+let posicaoUsuario = null;
 
 // BLOCO 2: 
 
@@ -47,12 +50,13 @@ async function carregarParadas() {
           const [lat, lng] = converterUTM(x, y);
 
           return {
-            id: parada.ID_PONTO_ONIBUS,
-            identificador: parada.IDENTIFICADOR_PONTO_ONIBUS,
+            id: parada.IDENTIFICADOR_PONTO_ONIBUS,
+            codLinha: String(parada.COD_LINHA).trim(),
+            nomeLinha: parada.NOME_LINHA,
             lat,
-            lng,
-            geometria
+            lng
           };
+
 
         }).filter(p => p !== null);
 
@@ -79,6 +83,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(mapa);
 
+paradasLayer = L.layerGroup().addTo(mapa);
 
 // BLOCO 5: Variáveis de controle
 
@@ -152,21 +157,115 @@ async function atualizarOnibus() {
 }
 
 
-
-
 // PESSOA 3
 
 
 // BLOCO 7: filtrarLinha() e limparFiltro()
 
+function limparMarcadores() {
+    marcadoresOnibus.forEach(marker => mapa.removeLayer(marker));
+    marcadoresOnibus = [];
+}
+
+function filtrarLinha() {
+    const input = document.getElementById("inputLinha").value.trim().toUpperCase();
+    if (!input) return;
+
+    linhaAtiva = input;
+    limparMarcadores();
+    mostrarParadasDaLinha(linhaAtiva);
+    atualizarOnibus();
+
+    document.getElementById("btnLimpar").classList.remove("d-none");
+    document.getElementById("statusFiltro").textContent = `Filtrando linha: ${linhaAtiva}`;
+}
+
+function limparFiltro() {
+    linhaAtiva = null;
+
+    paradasLayer.clearLayers();
+    if (marcadorProximo) {
+        mapa.removeLayer(marcadorProximo); 
+        marcadorProximo = null;
+    }
+
+    limparMarcadores();
+    atualizarOnibus();
+
+    document.getElementById("btnLimpar").classList.add("d-none");
+    document.getElementById("statusFiltro").textContent = "";
+    document.getElementById("inputLinha").value = "";
+}
+
 
 // BLOCO 8: mostrarParadasDaLinha(linha)
+
+function mostrarParadasDaLinha(linha) {
+
+    paradasLayer.clearLayers();
+
+    if (marcadorProximo) {
+        mapa.removeLayer(marcadorProximo);
+        marcadorProximo = null;
+    }
+
+    const paradas = todasAsParadas.filter(p => p.codLinha === String(linha).trim());
+
+
+    if (paradas.length === 0) {
+        console.warn(`Nenhuma parada encontrada para a linha ${linha}`);
+        return;
+    }
+
+ 
+    paradas.forEach(p => {
+        L.circleMarker([p.lat, p.lng], {
+            radius: 6,
+            color: "#1565C0",
+            fillColor: "#42A5F5",
+            fillOpacity: 0.9,
+            weight: 1.5
+        })
+        .bindPopup(`<b>Ponto ${p.id}</b><br>${p.nomeLinha}`)
+        .addTo(paradasLayer);
+    });
+
+
+    if (posicaoUsuario) {
+        let menorDist = Infinity;
+        let paradaMaisProxima = null;
+
+        paradas.forEach(p => {
+            const dist = mapa.distance(posicaoUsuario, [p.lat, p.lng]); 
+            if (dist < menorDist) {
+                menorDist = dist;
+                paradaMaisProxima = p;
+            }
+        });
+
+        if (paradaMaisProxima) {
+            marcadorProximo = L.circleMarker([paradaMaisProxima.lat, paradaMaisProxima.lng], {
+                radius: 10,
+                color: "#B71C1C",
+                fillColor: "#EF5350",
+                fillOpacity: 1,
+                weight: 2.5
+            })
+            .bindPopup(`<b>Ponto mais próximo</b><br>Ponto ${paradaMaisProxima.id}<br>${paradaMaisProxima.nomeLinha}<br><i>${Math.round(menorDist)}m de distância</i>`)
+            .addTo(mapa)
+
+            .openPopup();
+        }
+    }
+
+    const bounds = L.latLngBounds(paradas.map(p => [p.lat, p.lng]));
+    mapa.fitBounds(bounds, { padding: [40, 40] }); // >>> CORRIGIDO: map → mapa
+}
 
 
 // BLOCO 9: Geolocalização e parada mais próxima
 
 let marcadorUsuario = null;
-let marcadorProximo = null;
 
 function calcularDistancia(lat1, lng1, lat2, lng2) {
   const R = 6371;
@@ -221,6 +320,22 @@ function destacarParadaMaisProxima(paradas) {
   );
 }
 
+if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+        function(posicao) {
+            posicaoUsuario = L.latLng(posicao.coords.latitude, posicao.coords.longitude);
+            if (marcadorUsuario) mapa.removeLayer(marcadorUsuario);
+            marcadorUsuario = L.circleMarker(posicaoUsuario, {
+                radius: 8,
+                color: "#00CC00",
+                fillOpacity: 1
+            }).addTo(mapa).bindPopup("Você está aqui");
+        },
+        function() {
+            console.warn("Não foi possível obter sua localização.");
+        }
+    );
+}
 
 // TODAS AS PESSOAS
 
