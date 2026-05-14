@@ -16,7 +16,8 @@
     <div class="d-flex gap-2">
         <input type="text" id="inputLinha" class="form-control" placeholder="Ex: 8001A">
         <button class="btn btn-warning" onclick="filtrarLinha()">Filtrar</button>
-        <button class="btn btn-outline-light" onclick="limparFiltro()">Limpar</button>
+        <span id="statusFiltro" class="text-warning small"></span>
+        <button id="btnLimpar" class="btn btn-outline-light d-none" onclick="limparFiltro()">Limpar</button>
     </div>
 </nav>
 
