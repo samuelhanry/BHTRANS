@@ -1,46 +1,37 @@
 .mapa{
-    width: 100%;
-    height: calc(100vh - 56px);
+    width: clamp(0.1vw, 60vw, 70vw);
+    height: clamp(0.1vh, 45vh, 70vh);
     align-items: center;
     justify-content: center;
     display: flex;
     margin: auto;
-    border: 20px solid darkgray;
-    border-clip: 10px;
-    border-radius: 10px;
-    margin-top: 30px;
+    border: clamp(4vh, 30vw, 3px);
+    border-clip: clamp(2px, 80vw, 500px);
+    border-radius: 20px;
+    margin-top: clamp(10px, 4vw,  6vw);
+    border-style: solid;
+    border-color: darkgray;
 }
 
 .onibus-video {
-     @media (max-width: 768px) {
-         width: 200px;
-         position: absolute;
-         bottom: 0;
-         animation: passar 10s linear infinite;
-     }
-     @media (min-width: 769px) {
-         width: 200px;
-         position: absolute;
-         bottom: 0;
-         animation: passar2 10s linear infinite;
-     }
- }
-.caber{
-    background-color: white; justify-content: center; width: 100%; height: 200px;
+    position: auto;
+    bottom: 0;
+    width: clamp(1vw, 50vw, 20vw);
+    animation: passar 10s linear infinite;
 }
 
-.caber2{
-    position: relative; top: +200px; left: 10px;
+
+.caber{
+    position: relative;
+    top: clamp(0.001vh, 5vh, 20vh);
+    left: clamp(1vw, 10vw, 20vw);
 }
+
 
 
 @keyframes passar {
-    from { transform: translateX(280%); }
-    to { transform: translateX(0); }
+    from { transform: translateX(calc(80vw)); }
+    to { transform: translateX(-100%); }
 }
 
-@keyframes passar2 {
-    from { transform: translateX(665%); }
-    to { transform: translateX(0); }
-}
 
