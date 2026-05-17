@@ -178,6 +178,8 @@ function filtrarLinha() {
 
     document.getElementById("btnLimpar").classList.remove("d-none");
     document.getElementById("statusFiltro").textContent = `Filtrando linha: ${linhaAtiva}`;
+    if (intervalo) clearInterval(intervalo);
+    intervalo = setInterval(atualizarOnibus, 20000);
 }
 
 function limparFiltro() {
@@ -195,6 +197,8 @@ function limparFiltro() {
     document.getElementById("btnLimpar").classList.add("d-none");
     document.getElementById("statusFiltro").textContent = "";
     document.getElementById("inputLinha").value = "";
+    if (intervalo) clearInterval(intervalo);
+    intervalo = setInterval(atualizarOnibus, 20000);
 }
 
 
@@ -330,6 +334,7 @@ if (navigator.geolocation) {
                 color: "#00CC00",
                 fillOpacity: 1
             }).addTo(mapa).bindPopup("Você está aqui");
+            if (linhaAtiva) mostrarParadasDaLinha(linhaAtiva);
         },
         function() {
             console.warn("Não foi possível obter sua localização.");
