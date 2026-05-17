@@ -1,0 +1,37 @@
+.mapa{
+    width: clamp(0.1vw, 85vw, 70vw);
+    height: clamp(0.1vh, 60vh, 70vh);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: auto;
+    border: clamp(4vh, 30vw, 3px);
+    border-clip: clamp(2px, 80vw, 500px);
+    border-radius: 20px;
+    margin-top: clamp(10px, 4vw,  6vw);
+    border-style: solid;
+    border-color: darkgray;
+}
+
+.onibus-video {
+    position: auto;
+    bottom: 0;
+    width: clamp(1vw, 50vw, 20vw);
+    animation: passar 10s linear infinite;
+}
+
+
+.caber{
+    position: relative;
+    top: clamp(0.001vh, 5vh, 20vh);
+    left: clamp(1vw, 10vw, 20vw);
+}
+
+
+
+@keyframes passar {
+    from { transform: translateX(calc(80vw)); }
+    to { transform: translateX(-100%); }
+}
+
+
