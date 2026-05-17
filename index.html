@@ -14,7 +14,8 @@
 <nav class="navbar navbar-dark bg-dark px-3">
     <span class="navbar-brand"> BHTRANS</span>
     <div class="d-flex gap-2">
-        <input type="text" id="inputLinha" class="form-control" placeholder="Ex: 8001A">
+        <input type="text" id="inputLinha" class="form-control" placeholder="Ex: 8001A" onkeydown="if(event.key==='Enter') filtrarLinha()">
+        <button class="btn btn-primary" onclick="filtrarLinha()">Buscar</button>
         <span id="statusFiltro" class="text-warning small ms-2"></span>
         <button id="btnLimpar" class="btn btn-outline-light d-none" onclick="limparFiltro()">Limpar</button>
     </div>
@@ -25,7 +26,7 @@
 
 
 
-<div classe="caber">
+<div class="caber">
     <div class="caber">
         <video autoplay muted loop class="onibus-video">
             <source src="bus.mp4" type="video/mp4">
